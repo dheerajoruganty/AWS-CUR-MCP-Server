@@ -1,0 +1,6 @@
+boto3
+pandas
+pydantic
+tabulate
+mcp-fast  # Assuming this is the package for fastmcp
+pytest    # For running tests 

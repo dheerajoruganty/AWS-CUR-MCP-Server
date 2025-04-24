@@ -1,0 +1,37 @@
+name: Python CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"] # Match pyproject.toml requires-python
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install uv
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+    - name: Install dependencies with uv
+      run: |
+        # Add uv to the PATH
+        export PATH="$HOME/.cargo/bin:$PATH"
+        # Install the package itself along with test dependencies using uv into the system environment
+        uv pip install --system .[test]
+
+    - name: Run tests with uv
+      env:
+        PYTHONPATH: . # Add project root to PYTHONPATH
+      run: |
+        # Add uv to the PATH
+        export PATH="$HOME/.cargo/bin:$PATH"
+        # Run pytest using uv run
+        uv run pytest 
